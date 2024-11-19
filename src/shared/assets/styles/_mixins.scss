@@ -1,0 +1,165 @@
+// # Helpers
+@mixin fade-animation($duration: 0.2s, $mod: "open") {
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    visibility $duration,
+    opacity $duration;
+
+  &_#{$mod} {
+    visibility: visible;
+    opacity: 1;
+    transition:
+      visibility 0s,
+      opacity $duration;
+  }
+}
+
+@mixin square($size, $radius: 0) {
+  width: $size;
+  height: $size;
+
+  @if $radius != 0 {
+    border-radius: $radius;
+  }
+}
+
+// hidden scrollbar
+@mixin scrollbar-hidden {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  & {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+// hover for mobile
+@mixin hover() {
+  @media #{$cursor} {
+    &:hover {
+      @content;
+    }
+  }
+
+  @media #{$touch} {
+    &:active {
+      @content;
+    }
+  }
+}
+
+// Transforms
+@mixin transition($prop: all, $duration: 0.2s, $function: linear, $delay: 0s) {
+  transition: $prop $duration $function $delay;
+  will-change: $prop;
+}
+
+// =============================================================================
+// String Replace (https://gist.github.com/jonathantneal/d0460e5c2d5d7f9bc5e6)
+// =============================================================================
+
+@function str-replace($string, $search, $replace: "") {
+  $index: string.index($string, $search);
+
+  @if $index {
+    @return str-slice($string, 1, $index - 1) + $replace +
+      str-replace(
+        str-slice($string, $index + str-length($search)),
+        $search,
+        $replace
+      );
+  }
+
+  @return $string;
+}
+
+// =============================================================================
+// Font Face (https://gist.github.com/jonathantneal/d0460e5c2d5d7f9bc5e6)
+// =============================================================================
+
+@mixin font-face(
+  $name,
+  $path,
+  $weight: null,
+  $style: null,
+  $exts: eot woff2 woff ttf svg
+) {
+  $src: null;
+  $extmods: (
+    eot: "?",
+    svg: "#" + str-replace($name, " ", "_"),
+  );
+  $formats: (
+    otf: "opentype",
+    ttf: "truetype",
+  );
+
+  @each $ext in $exts {
+    $extmod: if(
+      map.has-key($extmods, $ext),
+      $ext + map.get($extmods, $ext),
+      $ext
+    );
+    $format: if(map.has-key($formats, $ext), map.get($formats, $ext), $ext);
+    $src: list.append(
+      $src,
+      url(string.quote($path + "." + $extmod)) format(string.quote($format)),
+      comma
+    );
+  }
+
+  @font-face {
+    font-family: string.quote($name);
+    font-style: $style;
+    font-weight: $weight;
+    src: $src;
+    font-display: swap; // add this line
+  }
+}
+
+// Themes
+@mixin with-dark-theme() {
+  [data-theme="dark"] & {
+    @content();
+  }
+}
+
+// media queries
+@mixin media-tablet {
+  @media (max-width: $s-tablet) {
+    @content;
+  }
+}
+
+@mixin media-phone {
+  @media (max-width: $l-mobile) {
+    @content;
+  }
+}
+
+@mixin custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: $border_color;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $light_grey_color;
+    border-radius: 20px;
+  }
+}
+
+@mixin reset-button {
+  padding: 0;
+  font: inherit;
+  background-color: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+}

@@ -1,0 +1,12 @@
+{
+  "extends": "stylelint-config-standard-scss",
+  "overrides": [
+    {
+      "files": ["*.js"],
+      "customSyntax": "postcss-lit"
+    }
+  ],
+  "rules": {
+    "scss/operator-no-newline-after": null
+  }
+}
