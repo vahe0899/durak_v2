@@ -3,7 +3,7 @@ import { createContext } from "react";
 import { AppStore } from "./AppStore";
 
 export const stores = {
-  appStore: new AppStore(),
+  deckStore: new AppStore(),
 };
 
 export const storesContext = createContext(stores);
